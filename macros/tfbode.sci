@@ -4,20 +4,32 @@ function [H, fig] = tfbode(H, fmin, fmax, units)
     fig = [];
     if rhs == 0 then
         H = [];
-        defaults = ["1"; "1 2 1"; "0.01"; "100"; "rad/s"];
+        defaults = ["1"; "1 2 1"; "0.01"; ""; "rad/s"; "0"];
         while %t
             answer = x_mdialog(["Transfer-function Bode plot"; ..
-                "Coefficients in descending powers of s (e.g. 1 2 1 = s^2+2s+1)"], ..
+                "Coefficients in descending powers of s or z (e.g. 1 2 1)"], ..
                 ["Numerator coefficients"; "Denominator coefficients"; ..
-                 "Minimum frequency (> 0)"; "Maximum frequency"; "Units: rad/s or Hz"], defaults);
+                 "Minimum frequency (> 0)"; "Maximum frequency (blank = automatic)"; "Units: rad/s or Hz"; ..
+                 "Sample period in seconds: 0 = continuous"], defaults);
             if isempty(answer) then H = []; return; end
             defaults = answer;
             try
                 num = tfbode_numbers(answer(1));
                 den = tfbode_numbers(answer(2));
                 lo = tfbode_numbers(answer(3));
-                hi = tfbode_numbers(answer(4));
-                H = tfbode_system(num, den);
+                ts = tfbode_numbers(answer(6));
+                if size(ts,"*") <> 1 then error("Sample period must be a scalar."); end
+                if ts == 0 then H = tfbode_system(num, den);
+                else H = tfbode_system(num, den, ts); end
+                if stripblanks(answer(4)) == "" then
+                    hi = 100;
+                    if ts <> 0 then
+                        hi = 0.45 / ts;
+                        if convstr(stripblanks(answer(5)), "l") == "rad/s" then hi = hi * 2 * %pi; end
+                    end
+                else
+                    hi = tfbode_numbers(answer(4));
+                end
                 [H, fig] = tfbode(H, lo, hi, answer(5));
                 return;
             catch

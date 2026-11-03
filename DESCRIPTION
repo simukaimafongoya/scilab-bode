@@ -1,7 +1,7 @@
 Toolbox: tfbode
 Title: Transfer Function Bode Plotter
 Summary: Bode magnitude and phase plots with coefficient entry and Hz or rad/s units
-Version: 0.3.0
+Version: 0.4.0
 Author: TFBode contributors
 Maintainer: simukaimafongoya
 Category: Control Systems
@@ -13,4 +13,5 @@ Date: 2026-11-03
 Description: Plot continuous-time transfer functions from descending-power coefficients
  or existing syslin systems. Includes an interactive dialog, frequency bounds,
  and explicit Hz or rad/s input. Includes Xcos Tools menu actions for selected
- blocks and continuous-time diagrams using lincos. Uses native Bode plotting.
+ blocks and continuous or single-rate discrete linear diagrams. Supports DLR,
+ DLSS, scalar delays, gains, sums and signal-only interconnections.

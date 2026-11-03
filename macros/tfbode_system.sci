@@ -1,4 +1,4 @@
-function H = tfbode_system(num, den)
+function H = tfbode_system(num, den, sample_time)
     // Coefficients are supplied in DESCENDING powers, like [1 3 2].
     for c = list(num, den)
         if type(c) <> 1 then
@@ -19,6 +19,11 @@ function H = tfbode_system(num, den)
     end
     num = matrix(num, 1, -1);
     den = matrix(den, 1, -1);
-    H = syslin("c", poly(num($:-1:1), "s", "coeff"), ..
-                    poly(den($:-1:1), "s", "coeff"));
+    domain = "c"; variable = "s";
+    if argn(2) >= 3 then
+        tfbode_sample_time(sample_time);
+        domain = sample_time; variable = "z";
+    end
+    H = syslin(domain, poly(num($:-1:1), variable, "coeff"), ..
+                       poly(den($:-1:1), variable, "coeff"));
 endfunction

@@ -11,9 +11,14 @@ function diagram = tfbode_xcos_wrap(block)
     if size(block.model.in, "*") <> 1 | size(block.model.out, "*") <> 1 then
         error("Select a block with one signal input and one signal output, or a superblock.");
     end
-    if ~isempty(block.model.evtin) | ~isempty(block.model.evtout) then
+    if (~isempty(block.model.evtin) | ~isempty(block.model.evtout)) & ..
+       ~or(block.gui == ["DLR" "DLSS" "DOLLAR_m" "DOLLAR_f"]) then
         error("Event-driven blocks are not supported by continuous Bode analysis.");
     end
+    // Selected supported discrete blocks are analyzed at the supplied sample period.
+    // No event links are copied from the parent diagram.
+    block.graphics.pein = zeros(size(block.model.evtin, "*"), 1);
+    block.graphics.peout = zeros(size(block.model.evtout, "*"), 1);
     diagram = scicos_diagram();
     diagram.props.title = ["Bode analysis"; ""];
     input = IN_f("define");

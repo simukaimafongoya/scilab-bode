@@ -1,14 +1,18 @@
 root = get_absolute_file_path("package.sce") + "../";
 try
     load("SCI/modules/atoms/macros/atoms_internals/lib");
-    extracted = atomsExtract(root + "dist/tfbode-0.3.0-scilab-2026.1.zip", TMPDIR);
+    extracted = atomsExtract(root + "dist/tfbode-0.4.0-scilab-2026.1.zip", TMPDIR);
     folder = TMPDIR + filesep() + extracted + filesep();
     description = atomsDESCRIPTIONread(folder + "DESCRIPTION");
-    assert_checkequal(description.packages.tfbode("0.3.0").Toolbox, "tfbode");
+    assert_checkequal(description.packages.tfbode("0.4.0").Toolbox, "tfbode");
     exec(folder + "loader.sce", -1);
     H = tfbode_system(10, [1 2 10]);
     [H, fig] = tfbode(H, 0.01, 100, "rad/s");
     close(fig);
+    loadXcosLibs(); loadScicos();
+    block = DLR("define"); block.graphics.exprs = ["1"; "z-0.5"];
+    [D, fig] = tfbode_xcos_discrete(block,0.1); close(fig);
+    assert_checkalmostequal(repfreq(D,[0.1 1]), repfreq(syslin(0.1,1/(%z-0.5)),[0.1 1]),1e-5,1e-7);
     mputl("PASS: ATOMS archive extraction, DESCRIPTION parsing, relocated loader and plotting", root + "tests/package-result.log");
 catch
     mputl(lasterror(), root + "tests/package-result.log");

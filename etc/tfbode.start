@@ -1,0 +1,4 @@
+tfbodelib = lib(get_absolute_file_path("tfbode.start") + "../macros/");
+if getscilabmode() <> "NWNI" then
+    tfbode_xcos_setup();
+end

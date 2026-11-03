@@ -1,0 +1,10 @@
+macros/*.bin
+macros/lib
+macros/names
+dist/
+tests/*.log
+tests/*.png
+demos/*.cos
+loader.sce
+unloader.sce
+cleaner.sce
